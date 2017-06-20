@@ -1,0 +1,10 @@
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\tim_firmware_update.cpp | 248 | TimLog::logInfo | succ to delete older log file: TIM_Firmware_Update.log
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\config.cpp | 74 | TimLog::logInfo | COM Config Into port: COM6, baudrate: 57600, databits: 8, parity: 0, stopbits: 1
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\config.cpp | 82 | TimLog::logInfo | ProgramName: ぁ
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\tim_firmware_update.cpp | 286 | TimLog::logInfo | Program file length is: 29!
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\tim_firmware_update.cpp | 55 | TimLog::logInfo | 将要发送 1 串程序更新数据
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\sjscop.cpp | 302 | TimLog::logInfo | Succ: CreateThread Succ
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\tim_firmware_update.cpp | 60 | TimLog::logInfo | Succ to Open Serial Port!
+INFO: 2017-06-16 13:35:15 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\tim_firmware_update.cpp | 76 | TimLog::logInfo | 第 0 程序更新次开始
+INFO: 2017-06-16 13:35:17 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\sjscop.cpp | 98 | TimLog::logInfo | 发送的命令:02 10 03 35 01 01 36 03 
+INFO: 2017-06-16 13:36:49 | f:\软件升级\update\tim_firmware_update\tim_firmware_update\sjscop.cpp | 362 | TimLog::logInfo | 发送的命令:02 04 35 00 00 00 31 03 
