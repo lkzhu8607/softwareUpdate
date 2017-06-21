@@ -5,9 +5,10 @@
 #include <ComDef.h>
 #include "fileOp.h"
 #include "windows.h"
-
+#include "string"
 
 //using namespace std;
+
 FileOp::FileOp(void)
 {
 }
@@ -90,12 +91,57 @@ int FileOp::getfileSize(const char *fileName)
 	return length;*/
 }
 
-int FileOp::getfileContent(const char *fileName, int length, BYTE *buffer)
+int FileOp::getfileContent(const char *fileName, BYTE *buffer)
 {
-	std::ifstream t;  
+	//std::ifstream t;
+	/*unsigned char szbuff[1024] = {0};
+	while(!t.eof())
+	{
+			t.getline(szbuff,1024);
+	}
 	//int length;  
 	t.open(fileName);     
-	t.read((char *)buffer, length);       // read the whole file into the buffer  
-	t.close();                    // close file handle  
-	return 0;
+	t.read((char *)buffer, length); */      // read the whole file into the buffer  
+	int count = 0;
+	int address = 0;
+	int size = 0;
+	ifstream file;  
+	file.open(fileName,ios::in);  
+  
+	if(!file.is_open())  
+		return 0;
+	std::string strLine;  
+	int j = 0;
+    while(getline(file,strLine))  
+    {  
+		count = 0;
+		address = 0;
+		std::string dataStr;
+		if(strLine.empty())  
+			continue;
+		sscanf(strLine.substr(1,2).c_str(),"%02X",&count);
+		sscanf(strLine.substr(3,4).c_str(),"%02X",&address);
+		
+		if(count == 0)
+			break;
+		if(address == 0)
+			continue;
+		size += count;
+		dataStr = strLine.substr(9,count*2);
+		for(int i = 0;i < count; i++){
+			sscanf(dataStr.substr(i*2,2).c_str(),"%02X",&buffer[j]);
+			//cout<<buffer[j] <<endl;
+			//printf("%02X", buffer[j]);
+			j++;
+		}
+		//printf("\n");
+		//cout<<count <<endl;
+		//cout<<size <<endl;
+		//cout<<dataStr<<endl; 
+		//cout<<strLine <<endl;                
+    }
+	//cout<<size <<endl;
+	file.close();                    // close file handle  
+	//length = size;
+	return size;
 }

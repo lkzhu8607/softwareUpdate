@@ -19,6 +19,7 @@ const BYTE ETX	= 0x03;
 const BYTE DLE	= 0x10;
 
 //命令代码--请求命令
+#define CMD_GETVERSION_OLD				0x08	//查询台湾闸机模块程序版本
 #define CMD_GETSTATUS				0x31	//发卡模块轮询
 #define CMD_MOTORTEST				0x32	//电机测试
 #define CMD_RESET					0x33	//复位

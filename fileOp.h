@@ -19,5 +19,5 @@ public:
 	int deletefile(LPCWSTR fileName);
 	int deletefile(const char *fileName);
 	int getfileSize(const char *fileName);
-	int getfileContent(const char *fileName, int length, BYTE *buffer);
+	int getfileContent(const char *fileName, BYTE *buffer);
 };

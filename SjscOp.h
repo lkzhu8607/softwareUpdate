@@ -53,6 +53,7 @@ public:
 	BOOL Stop(void);
 
 	int OpGetVer(unsigned short *OpmajorVersion, unsigned short *OpminorVersion);	//获取模块版本
+	int OpGetVerTW(unsigned short *OpmajorVersion, unsigned short *OpminorVersion, unsigned short *OpSlavemajorVersion, unsigned short *OpSlaveminorVersion); //获取台湾闸机模块程序更新后的版本信息
 	int OpUpdate(BYTE &data);
 	int OpProgramStart(int iLength, BYTE &data);
 	int OpSendProgramData(BYTE *data, BYTE &data1);

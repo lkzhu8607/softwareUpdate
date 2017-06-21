@@ -618,6 +618,92 @@ int CSjscOp::OpGetVer(unsigned short *OpmajorVersion, unsigned short *OpminorVer
 	return ret;
 }
 
+int CSjscOp::OpGetVerTW(unsigned short *OpmajorVersion, unsigned short *OpminorVersion, unsigned short *OpSlavemajorVersion, unsigned short *OpSlaveminorVersion)
+{
+	int ret = DLL_RES_OTHERWRONG;
+	int iretry = 0;
+	const int nLen = 3;
+	BYTE szBuf[nLen];
+	memset(szBuf, 0, nLen);	
+
+	if ( !m_bPortOpen)
+	{
+		//m_log.Trace(_T("Error: COM not open"));
+		printf("Error: COM not open");
+		return DLL_RES_PORTUNOPEN;
+	}
+
+	//EnterCriticalSection(&m_cCmd);
+	if (m_iSeq>255 || m_iSeq<1)
+	{
+		m_iSeq = 1;
+	}
+	
+	szBuf[0] = nLen-1;
+	szBuf[1] = CMD_GETVERSION_OLD;
+	szBuf[2] = m_iSeq;
+
+	*OpmajorVersion = 0;
+	*OpminorVersion = 0;
+	*OpSlavemajorVersion = 0;
+	*OpSlaveminorVersion = 0;
+
+	do 
+	{
+		if ( SendCommand(m_hPort, szBuf, nLen) )
+		{
+			BYTE szRecv[_RECV_BUFFER_LEN_];
+			memset(szRecv, 0, sizeof(szRecv));
+			DWORD nRecvLen = 0;
+
+			if (Kx_ReadFile(szRecv, nRecvLen))
+			{
+				if ( (szRecv[2]==0x88) && (szRecv[3]==m_iSeq) )
+				//if ( (szRecv[2]==0x88))
+				{
+					if (szRecv[4]==MODULE_STATE_OK)
+					{
+						*OpmajorVersion = szRecv[5];
+						*OpminorVersion = szRecv[6];
+						*OpSlavemajorVersion = szRecv[7];
+						*OpSlaveminorVersion = szRecv[8];
+						ret = DLL_RES_OK;
+					}
+					else if (szRecv[4]==MODULE_STATE_FAIL) 
+					{
+						ret = DLL_RES_FAIL;					
+					}
+					else if (szRecv[4]==MODULE_STATEBUSY) 
+					{
+						ret = DLL_RES_BUSY;					
+					}
+					else if (szRecv[4]==MODULE_STATE_NAK) 
+					{
+						ret = DLL_RES_NAK;					
+					}
+				}
+				else
+				{
+					//m_log.Trace(_T("Error: Cmd or Seq No."));
+					printf("Error: Cmd or Seq No.");
+					gp_objTimLog.logError(__FILE__, __LINE__, "Error: Cmd or Seq No.");
+				}				
+				break;			
+			}
+			else
+			{
+				ret = DLL_RES_TIMEOUT;
+			}
+		}
+
+		iretry++;
+	} while (iretry < m_iRetry);
+
+	m_iSeq++;
+	//LeaveCriticalSection(&m_cCmd);
+	return ret;
+}
+
 //硬币模块程序更新
 int CSjscOp::OpUpdate(BYTE &data)
 {	
@@ -656,8 +742,8 @@ int CSjscOp::OpUpdate(BYTE &data)
 
 			if (Kx_ReadFile(szRecv, nRecvLen, 10000))
 			{
-				//if (szRecv[2]== CMD_UPDATE && szRecv[3]==m_iSeq)
-				if (szRecv[2]== CMD_UPDATE)
+				if (szRecv[2]== CMD_UPDATE && szRecv[3]==m_iSeq)
+				//if (szRecv[2]== CMD_UPDATE)
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{
@@ -667,7 +753,7 @@ int CSjscOp::OpUpdate(BYTE &data)
 					{
 						ret = szRecv[4];
 					}					
-					data = szRecv[5];
+					data = szRecv[4];
 				}
 				else
 				{
@@ -734,8 +820,8 @@ int CSjscOp::OpProgramStart(int iLength, BYTE &data)
 
 			if (Kx_ReadFile(szRecv, nRecvLen, 3200))
 			{
-				//if (szRecv[2]== CMD_PROGRAM_START && szRecv[3]==m_iSeq)
-				if (szRecv[2]== CMD_PROGRAM_START)
+				if (szRecv[2]== CMD_PROGRAM_START && szRecv[3]==m_iSeq)
+				//if (szRecv[2]== CMD_PROGRAM_START)
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{
@@ -745,7 +831,7 @@ int CSjscOp::OpProgramStart(int iLength, BYTE &data)
 					{
 						ret = szRecv[4];
 					}					
-					data = szRecv[5];
+					data = szRecv[4];
 				}
 				else
 				{
@@ -808,8 +894,8 @@ int CSjscOp::OpSendProgramData(BYTE *data,BYTE &data1)
 
 			if (Kx_ReadFile(szRecv, nRecvLen, 5000))
 			{
-				//if (szRecv[2]== CMD_SEND_PROGRAM_DATA && szRecv[3]==m_iSeq)
-				if (szRecv[2]== CMD_SEND_PROGRAM_DATA)
+				if (szRecv[2]== CMD_SEND_PROGRAM_DATA && szRecv[3]==m_iSeq)
+				//if (szRecv[2]== CMD_SEND_PROGRAM_DATA)
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{
@@ -819,7 +905,7 @@ int CSjscOp::OpSendProgramData(BYTE *data,BYTE &data1)
 					{
 						ret = szRecv[4];
 					}		
-					data1 = szRecv[5];
+					data1 = szRecv[4];
 				}
 				else
 				{
@@ -881,8 +967,8 @@ int CSjscOp::OpProgramEnd(BYTE &data)
 
 			if (Kx_ReadFile(szRecv, nRecvLen, 3200))
 			{
-				//if (szRecv[2]== CMD_PROGRAM_END && szRecv[3]==m_iSeq)
-				if (szRecv[2]== CMD_PROGRAM_END)
+				if (szRecv[2]== CMD_PROGRAM_END && szRecv[3]==m_iSeq)
+				//if (szRecv[2]== CMD_PROGRAM_END)
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{
@@ -892,7 +978,7 @@ int CSjscOp::OpProgramEnd(BYTE &data)
 					{
 						ret = szRecv[4];
 					}			
-					data = szRecv[5];
+					data = szRecv[4];
 				}
 				else
 				{
@@ -954,8 +1040,8 @@ int CSjscOp::OpProgramSwitchApp(BYTE &data)
 
 			if (Kx_ReadFile(szRecv, nRecvLen, 3200))
 			{
-				//if (szRecv[2]== CMD_SWITCH_APP && szRecv[3]==m_iSeq)
-				if (szRecv[2]== CMD_SWITCH_APP)
+				if (szRecv[2]== CMD_SWITCH_APP && szRecv[3]==m_iSeq)
+				//if (szRecv[2]== CMD_SWITCH_APP)
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{
@@ -965,7 +1051,7 @@ int CSjscOp::OpProgramSwitchApp(BYTE &data)
 					{
 						ret = szRecv[4];
 					}					
-					data = szRecv[5];
+					data = szRecv[4];
 				}
 				else
 				{
