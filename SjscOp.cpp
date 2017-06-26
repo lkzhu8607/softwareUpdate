@@ -58,7 +58,7 @@ unsigned int CSjscOp::InsertDLE(LPBYTE pBuf, DWORD nLen, LPBYTE ptarget)
 
 BOOL CSjscOp::SendCommand(HANDLE hPort, LPBYTE pBuf, DWORD nLen)
 {
-/*	char str[2048] = {0};
+	/*char str[2048] = {0};
 	char tmp[5] = {0};
 	string Str;
 	for(unsigned int i=0;i < nLen;i++)
@@ -68,7 +68,7 @@ BOOL CSjscOp::SendCommand(HANDLE hPort, LPBYTE pBuf, DWORD nLen)
 		Str += tmpStr;
 	}
 	sprintf_s(str,"%s:%s","发送的命令",Str.c_str());
-	gp_objTimLog.logInfo(__FILE__, __LINE__, str);	*/
+	gp_objTimLog.logInfo(__FILE__, __LINE__, str);*/
 
 	//计算校验和
 	unsigned char OriData[_RECV_BUFFER_LEN_];
@@ -95,7 +95,7 @@ BOOL CSjscOp::SendCommand(HANDLE hPort, LPBYTE pBuf, DWORD nLen)
 		Str += tmpStr;
 	}
 	sprintf_s(str,"%s:%s","发送的命令",Str.c_str());
-	gp_objTimLog.logInfo(__FILE__, __LINE__, str);	
+	gp_objTimLog.logInfo(__FILE__, __LINE__, str);
 
 	//m_log.Trace(_T("Send: "), localdata, nNewLen);
 
@@ -574,8 +574,8 @@ int CSjscOp::OpGetVer(unsigned short *OpmajorVersion, unsigned short *OpminorVer
 
 			if (Kx_ReadFile(szRecv, nRecvLen))
 			{
-				//if ( (szRecv[2]==CMD_GETVERSION) && (szRecv[3]==m_iSeq) )
-				if ( (szRecv[2]==CMD_GETVERSION))
+				if ( (szRecv[2]==CMD_GETVERSION) && (szRecv[3]==m_iSeq) )
+				//if ( (szRecv[2]==CMD_GETVERSION))
 				{
 					if (szRecv[4]==MODULE_STATE_OK)
 					{

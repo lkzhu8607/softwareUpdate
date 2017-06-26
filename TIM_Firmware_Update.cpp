@@ -12,9 +12,9 @@
 
 
 using namespace std;
-#define DELETE_FLAG
+//#define DELETE_FLAG
 //#define FOR_NEW
-#define FOR_TAIWAN
+//#define FOR_TAIWAN
 FileOp objfileOp;
 
 BYTE proGramData[1024*1024*10] = {0};//分配10M的大小容量为了保存更新程序的数据
@@ -147,26 +147,25 @@ int UpdateProg(Config objconfig, CSjscOp objCSjscOp, int programLength, BYTE *pr
 											unsigned short slaveMinorVersion = 0;
 											//gp_objTimLog.logInfo(__FILE__, __LINE__, "程序更新操作成功");
 											Sleep(10000);
-#ifdef FOR_TAIWAN
-											ret = objCSjscOp.OpGetVerTW(&MajorVersion, &MinorVersion, &slaveMajorVersion, &slaveMinorVersion);
-											if(ret == 0)
-											{
-												char str[1024] = {0};
-												sprintf_s(str,"获取新程序的版本号成功，新程序的版本如下:主边主版本号 %d, 主边次版本号 %d;副边主版本号 %d, 副边次版本号 %d",MajorVersion, MinorVersion, slaveMajorVersion, slaveMinorVersion);
-												gp_objTimLog.logInfo(__FILE__, __LINE__, str);
-											}
-#else
 											ret = objCSjscOp.OpGetVer(&MajorVersion, &MinorVersion);
 											if(ret == 0)
 											{
 												char str[1024] = {0};
 												sprintf_s(str,"获取新程序的版本号成功，新程序的版本如下:主版本号 %d, 次版本号 %d",MajorVersion, MinorVersion);
 												gp_objTimLog.logInfo(__FILE__, __LINE__, str);
+												//return 0;
 											}
-#endif
 											else
 											{
-												gp_objTimLog.logError(__FILE__, __LINE__, "获取新程序的版本号失败");
+												ret = objCSjscOp.OpGetVerTW(&MajorVersion, &MinorVersion, &slaveMajorVersion, &slaveMinorVersion);
+												if(ret == 0)
+												{
+													char str[1024] = {0};
+													sprintf_s(str,"获取新程序的版本号成功，新程序的版本如下:主边主版本号 %d, 主边次版本号 %d;副边主版本号 %d, 副边次版本号 %d",MajorVersion, MinorVersion, slaveMajorVersion, slaveMinorVersion);
+													gp_objTimLog.logInfo(__FILE__, __LINE__, str);
+												}
+												//else
+													//gp_objTimLog.logError(__FILE__, __LINE__, "获取新程序的版本号失败");
 											}
 
 											return 0;
@@ -304,23 +303,24 @@ int _tmain(int argc, _TCHAR* argv[])
 		exit(1);
 	}
 
-	if(programLength = objfileOp.getfileSize(objconfig.ProgramName.c_str()))
-	{
+	//if(programLength = objfileOp.getfileSize(objconfig.ProgramName.c_str()))
+	//{
+
+		programLength = objfileOp.getfileContent(objconfig.ProgramName.c_str(), proGramData);
 		char str[1024] = {0};
 		sprintf_s(str,"Program file length is: %d!",programLength);
 		gp_objTimLog.logInfo(__FILE__, __LINE__, str);
-		programLength = objfileOp.getfileContent(objconfig.ProgramName.c_str(), proGramData);
 
 		if(UpdateProg(objconfig, objCSjscOp, programLength, proGramData) == 0)
 		{
-#ifdef DELETE_FLAG
+//#ifdef DELETE_FLAG
 			objfileOp.deletefile(objconfig.ProgramName.c_str());//最后删除更新的程序文件
 			exit(1);
-#else
+/*#else
 			exit(1);
-#endif
+#endif*/
 		}
-	}
+	//}
 	return 0;
 }
 
